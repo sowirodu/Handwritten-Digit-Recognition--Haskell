@@ -56,12 +56,15 @@ outOf a b =  (fromIntegral a) % (fromIntegral b)
 
 -- Create a list of all possible digit labels. 
 allDigits :: [Digit]
-allDigits = undefined
+allDigits = [0..9]
 
 
 -- Create a list of all possible features, starting at 0.
 allFeatures :: [Feature]
-allFeatures = undefined
+allFeatures = [0..783]
+
+showPixelImageRow :: [Bool] -> String
+showPixelImageRow row = [if x == True then '#' else ' ' | x <- row]
 
 -- showPixelImage should take a PixelImage and turn it into a single string.
 -- Since we have lost gray colors (see readPixelImage in Framework.hs), our
@@ -73,8 +76,8 @@ allFeatures = undefined
 -- 
 -- Example: showPixelImage [[True, True], [True, False]]
 --          "##\n# \n"
-showPixelImage :: PixelImage -> String
-showPixelImage img = undefined
+showPixelImage :: PixelImage -> String  
+showPixelImage img = unlines [showPixelImageRow i | i <- img]
 
 -- lookupVal takes a key of type a, an association list from a to b, and returns the hopefully
 -- unique value associated with the key. If lst contains the tuple (k, v), then 
@@ -88,8 +91,8 @@ showPixelImage img = undefined
 -- Example: lookupVal 'b' [('a', 8), ('b', 7), ('c', 9)]
 --          7
 lookupVal :: Eq a => a -> [(a, b)] -> b
-lookupVal key lst = 
-    undefined
+lookupVal key lst = head [ snd x | x <- lst, fst x == key]
+                                                                                                        
    
 --                                       Milestone Two
 

@@ -13,6 +13,6 @@ The detailed description for this project can be found on the [course webpage](h
 
 
 
-Student Name:
-Trinity ID: 
+Student Name: Seth Owirodu
+Trinity ID: sowirodu
 
