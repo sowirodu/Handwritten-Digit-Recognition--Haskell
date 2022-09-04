@@ -121,12 +121,14 @@ type Corpus = [(Digit, [PixelImage])]
 --imgB = [[False, False]]
 --imgC = [[False, True]]
 --imgLbls = [(imgA, 9), (imgB, 2), (imgC, 9)]
---sol = [(9, [imgA, imgC]), (2, [imgB])] 
+--sol = [(9, [imgA, imgC]), (2, [imgB])]  
 -- buildCorpus imgLbls 
 --           [(9, [ [[True, False]], [[False, True]] ]), (2, [[[False, False]]])]
+helperCorpus digit imgLbls = [fst x | x <- imgLbls, snd x == digit]
+
 buildCorpus :: [(PixelImage, Digit)] -> Corpus
 buildCorpus imgLbls = 
-    undefined
+    [(x, helperCorpus x imgLbls) | x <- nub [snd x | x <- imgLbls]]
 
 --
 --                                  Core Project 
