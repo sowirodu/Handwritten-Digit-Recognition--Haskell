@@ -91,7 +91,9 @@ showPixelImage img = unlines [showPixelImageRow i | i <- img]
 -- Example: lookupVal 'b' [('a', 8), ('b', 7), ('c', 9)]
 --          7
 lookupVal :: Eq a => a -> [(a, b)] -> b
-lookupVal key lst = head [ snd x | x <- lst, fst x == key]
+lookupVal key lst = 
+    if length b == 1 then head b else error "List is Empty"
+    where b = [ snd x | x <- lst, fst x == key]
                                                                                                         
    
 --                                       Milestone Two
@@ -99,7 +101,7 @@ lookupVal key lst = head [ snd x | x <- lst, fst x == key]
 -- A corpus is an association list between digits and the images that are labeled with that
 -- digit. By storing the information this way, we avoid the frequent computation of which images
 -- are labeled with which digit. 
-type Corpus = [(Digit, [PixelImage])]
+
 
 -- When we read in the files, we get a list of image-label tuples. It is far more efficient to
 -- group the images by their label as a Corpus. buildCorpus takes the list of tuples and
@@ -139,23 +141,23 @@ buildCorpus imgLbls =
 -- You may find the (sum) function helpful: it takes a list of numbers and adds them together.
 -- Example: probOfDigit corpus 9
 --         2 % 3
+type Corpus = [(Digit, [PixelImage])]
 probOfDigit :: Corpus -> Digit -> Rational
-probOfDigit corpus digit = 
-    undefined
-
+probOfDigit corpus digit = outOf (sum([length (snd x) | x <- corpus, fst x == digit])) (sum([length(snd x) | x <- corpus]))
+    
 -- Given the list of images (imgs) labeled for a given digit Y, and a feature F (ftr),
 -- probOfFeature imgs ftr estimates the probability P(ftr=Black | Y). See the assignment page for
 -- details.
 probOfFeature :: [PixelImage] -> Feature -> Rational
 probOfFeature imgs ftr =
-    undefined
+    outOf ( sum ([length (x) | x <- imgs, hasFeature x ftr == True]) + 1) (sum ([length (x) | x <- imgs]) + 2)
 
 -- Given the list of images (imgs) labeled for a given digit Y, and a feature F (ftr),
 -- probOfNoFeature imgs ftr estimates the probability P(ftr=White | Y). See the assignment page
 -- for details.
 probOfNoFeature :: [PixelImage] -> Feature -> Rational
 probOfNoFeature imgs ftr = 
-    undefined
+    outOf ( sum ([length (x) | x <- imgs, hasFeature x ftr == False]) + 1) (sum ([length (x) | x <- imgs]) + 2)
 
 -- rankOfDigit should estimate the rank of a given digit for a given instance, as specified on
 -- the assignment page.
@@ -164,8 +166,9 @@ probOfNoFeature imgs ftr =
 -- I recommend you calculate the values for positive features (those that occur in newImg)
 -- and negative features (those that do not occur in newImg) separately.
 rankOfDigit :: Corpus -> Digit -> PixelImage -> Rational
-rankOfDigit corpus digit newImg = 
-    undefined
+rankOfDigit corpus digit newImg = product multipls
+                        where spezis = (lookupVal digit corpus)
+                              multipls = [ if hasFeature newImg x then probOfFeature spezis x else probOfNoFeature spezis x | x <- allFeatures]
 
 -- classifyImage should return the most likely digit, based on the rank computed by rankOfDigit.
 -- You will need to use the maximum function.
@@ -177,8 +180,7 @@ rankOfDigit corpus digit newImg =
 --   until smoothing is working correctly, so don't insert that check until then! 
 --   This is not worth any points!
 classifyImage :: Corpus -> PixelImage -> Digit
-classifyImage corpus newImg = 
-    undefined
+classifyImage corpus newImg = snd ( maximum [ (rankOfDigit corpus x newImg, x) | x <- allDigits])
 
 --                                  Optional Helpful Functions
 -- These functions are optional, but may be helpful with debugging. They are not worth any points.
